@@ -1,0 +1,53 @@
+Link: https://github.com/kubernetes/dashboard/blob/master/docs/user/access-control/creating-sample-user.md
+
+1. open wsl.exe and nevigate to /mnt/c/programdata/chocolatey/bin
+
+2. type below command
+cat <<EOF | kubectl.exe apply -f -
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: admin-user
+  namespace: kubernetes-dashboard
+EOF
+
+3. type below command
+cat <<EOF | kubectl.exe apply -f -
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: admin-user
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: cluster-admin
+subjects:
+- kind: ServiceAccount
+  name: admin-user
+  namespace: kubernetes-dashboard
+EOF
+
+4. Start proxy: kubectl.exe proxy
+
+5. Deploy kubernetes UI
+kubectl.exe apply -f https://raw.githubusercontent.com/kubernetes/dashboard/v2.2.0/aio/deploy/recommended.yaml
+
+
+6. run below command
+kubectl.exe -n kubernetes-dashboard get secret $(kubectl -n kubernetes-dashboard get sa/admin-user -o jsonpath="{.secrets[0].name}") -o go-template="{{.data.token | base64decode}}"
+
+
+NOTE: below command does not work, then followed command from #7
+
+7. Refered the new process from URL https://kubernetes.io/docs/reference/access-authn-authz/authentication/
+
+8. kubectl.exe create serviceaccount jenkins
+9. kubectl.exe get serviceaccounts jenkins -o yaml
+10. kubectl.exe get secret  jenkins-token-m6qpf -o yaml
+
+11. opened http://localhost:8001/api/v1/namespaces/kubernetes-dashboard/services/https:kubernetes-dashboard:/proxy/#/login
+12. opened Lens and added cluster with default value of "select kubeconfig file" and docker-desktop as "select context"
+13. To get the token for #11 in Lens - click workload->Pods->Any Pod from list->secret (default-token-wqz6q hyperlink)->token->show->copy it
+(another way: Configuration->Secret->select any token->)
+14. Copy the token from #13 and go to #11 and paste the token and the kuberenetes dashboard is openend
+

@@ -1,0 +1,17 @@
+https://www.youtube.com/watch?v=f0lMGPB10bM
+https://dotnetplaybook.com/deploy-a-net-core-api-with-docker/
+-----------------
+
+1. dotnet new webapi -n DockerApi
+2. dotnet build 
+3. dotnet run
+4. docker build -t vkgmca/dockerapi .
+5. docker images
+6. docker run -d --name mycontainer -p 8080:80 vkgmca/dockerapi
+7. docker stop 2c25954bde0e
+8. docker push vkgmca/dockerapi
+9. docker run -d --name mycontainer -p 8082:80 vkgmca/dockerapi
+10. http://localhost:8082/WeatherForecast
+
+ => => writing image sha256:3498f8911a76306e9dbf06c3ea7897dba9974d404eba3c8dd409f462fbfee830                          0.0s 
+ => => naming to docker.io/vkgmca/dockerapi    
